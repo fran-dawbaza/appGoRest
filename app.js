@@ -3,7 +3,7 @@
 const opcionesFetch = {
     headers: {
         "Accept": "application/json",
-        "Authorization": "Bearer d4b968ff7bfb0f7628a4f7739ce00634169fbd6d352526c8c50f01cf18c3c7c9",
+        "Authorization": `Bearer ${GOREST_API_TOKEN}`,
         "Content-Type": "application/json",
     },
     method: "GET",
