@@ -9,7 +9,7 @@ const opcionesFetch = {
     method: "GET",
 
 };
-
+/*
 fetch("https://gorest.co.in/public/v2/users", opcionesFetch)
     .then(res => {
         console.log(res);
@@ -31,7 +31,7 @@ fetch("https://gorest.co.in/public/v2/users", opcionesFetch)
     .catch(console.log);
 
 let res;
-
+*/
 const muestraUsuario = evento => {
     if (evento.target.localName == "td") { // captura de evento click en una celda-> buscamos la fila
         console.log("td padre:", evento.target.parentNode);
@@ -49,15 +49,15 @@ const hazPaginacion = (url, paginaActual, cabeceras) => {
     const paginas = cabeceras.get('X-Pagination-Pages') || '100'; //total number of pages.
     const pagina = cabeceras.get('X-Pagination-Page') || paginaActual || 1; //current page number.
 
-    const statusAnterior = pagina == 1 ? 'disabled' : '" onclick="muestraUsuarios(null,' + (pagina - 1) + ')';
-    const statusSiguiente = pagina == paginas ? 'disabled' : '" onclick="muestraUsuarios(null,' + (pagina + 1) + ')';
+    const statusAnterior = pagina == 1 ? 'disabled' : '" onclick="muestraUsuarios(null,' + (+pagina - 1) + ')';
+    const statusSiguiente = pagina == paginas ? 'disabled' : '" onclick="muestraUsuarios(null,' + (+pagina + 1) + ')';
     const statusPrimera = pagina == 1 ? 'disabled' : '" onclick="muestraUsuarios(null,1)';
     const statusUltima = pagina == paginas ? 'disabled' : '" onclick="muestraUsuarios(null,' + (paginas) + ')';
 
     let paginasCercanas = '';
 
-    for (let i = pagina - 5; i < pagina + 5; i++) {
-        if (i > 1 && i < paginas - 1) {
+    for (let i = +pagina - 5; i < +pagina + 5; i++) {
+        if (i > 1 && i < +paginas - 1) {
             let disabled = (i == pagina) ? 'disabled' : '" onclick="muestraUsuarios(null,' + i + ')';
             paginasCercanas += `<li class="page-item ${disabled}"><a class="page-link" href="#">${i}</a></li>
             `;
@@ -67,9 +67,9 @@ const hazPaginacion = (url, paginaActual, cabeceras) => {
     let plantilla = `<nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
       <li class="page-item ${statusAnterior}"><a class="page-link" href="#">Anterior</a></li>
-      <li class="page-item ${statusPrimera}"><a class="page-link" href="#">Primera</a></li>
+      <li class="page-item ${statusPrimera}"><a class="page-link" href="#">1</a></li>
       ${paginasCercanas}
-      <li class="page-item ${statusUltima}"><a class="page-link" href="#">Última</a></li>
+      <li class="page-item ${statusUltima}"><a class="page-link" href="#">${paginas}</a></li>
       <li class="page-item ${statusSiguiente}"><a class="page-link" href="#">Siguiente</a></li>
     </ul>
   </nav>`;
@@ -125,9 +125,18 @@ const muestraUsuarios = async(evento, pagina = 1) => {
     //JSON.stringify(usuarios);
 };
 
+const nuevoUsuario = evento => {
+    evento.preventDefault();
+    const nombre = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const genero = document.getElementById('genderMale').checked ? 'male':'female';
+    const estado = document.getElementById('statusActive').checked ? 'male':'female';
+    const formu = new FormData('usuario');
+    console.log(formu);
 
+}
 
-document.getElementById('usuarios').addEventListener('click', muestraUsuarios);
+/*document.getElementById('usuarios').addEventListener('click', muestraUsuarios);
 document.getElementById('buscarPorEntrada').addEventListener('click', () => {
     const buscar = document.getElementById('buscar');
     buscar.attributes['tipobusqueda'].value = 'posts';
@@ -156,4 +165,6 @@ document.getElementById('buscarGeneral').addEventListener('click', () => {
 document.getElementById('formBuscar').addEventListener('submit', (e) => {
     e.preventDefault();
     const tipoBusqueda = document.getElementById('buscar').attributes['tipobusqueda'].value;
-});
+});*/
+
+document.getElementById('usuario').addEventListener('submit', nuevoUsuario);
