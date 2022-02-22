@@ -18,3 +18,7 @@
 .pie {
     grid-area: pie;
 }
+
+input:invalid {
+    background-color: lightcoral;
+}
