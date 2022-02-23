@@ -1,4 +1,4 @@
-// lo usaremos para las peticiones con fetch, no olvidar modificar method y body
+
 
 
 
@@ -48,12 +48,3 @@ document.getElementById('formUsuario')
 
 
 
-/*
-
-
-
-const nuevoUsuario = usuario => {
-
-})
-
-}*/
