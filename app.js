@@ -71,9 +71,9 @@ const muestraUsuarios = async(evento, pagina = 1) => {
     //res.headers.forEach(function(val, key) { console.log(key + ' -> ' + val); });
 
     const contenido = document.getElementById('principal');
-    contenido.removeEventListener('click', muestraUsuario, false);
+    
 
-    let filas = '';
+    /*let filas = '';
     usuarios.forEach(usuario => {
         filas += `
     <tr>
@@ -84,11 +84,29 @@ const muestraUsuarios = async(evento, pagina = 1) => {
         <td>${usuario.status=='active'?'activo':'inactivo'}</td>
         <td>botones</td>
     </tr>`;
-    });
+    });*/
+    let filas = usuarios.map(u => `
+    <tr>
+        <th scope="row">${u.id}</th>
+        <td>${u.name}</td>
+        <td>${u.email}</td>
+        <td>${u.gender=='male'?'hombre':'mujer'}</td>
+        <td>${u.status=='active'?'activo':'inactivo'}</td>
+        <td>botones</td>
+    </tr>`
+    ).join('');
+ 
 
     const paginacion = hazPaginacion('https://gorest.co.in/public/v2/users?page=', pagina, respuesta.headers);
 
-    contenido.innerHTML = `<div class="table-responsive"><table id="userTable" class="table table-striped table-hover">
+    fileToTemplateLiteral('./templates/tablaUsuarios.html',
+                        {filas,paginacion},
+                        (error,resultado)=>{
+                            contenido.removeEventListener('click', muestraUsuario, false);
+                            contenido.innerHTML = resultado;
+                            contenido.addEventListener('click', muestraUsuario, false)
+                        });
+   /* contenido.innerHTML = `<div class="table-responsive"><table id="userTable" class="table table-striped table-hover">
     <thead>
       <tr>
         <th scope="col">#</th>
@@ -103,7 +121,7 @@ const muestraUsuarios = async(evento, pagina = 1) => {
     </tbody>
   </table>
 </div>${paginacion}`;
-    contenido.addEventListener('click', muestraUsuario, false);
+    contenido.addEventListener('click', muestraUsuario, false);*/
     //JSON.stringify(usuarios);
 };
 
