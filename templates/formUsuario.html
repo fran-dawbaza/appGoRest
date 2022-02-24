@@ -1,0 +1,51 @@
+<br>
+<form id="formUsuario">
+    <div class="row mb-3">
+        <label for="name" class="col-sm-2 col-form-label">Nombre</label>
+        <div class="col-sm-10">
+            <input type="hidden" id="id" name="id" value="${id}">
+            <input type="text" class="form-control" id="name" value="${name}">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <label for="email" class="col-sm-2 col-form-label">Email</label>
+        <div class="col-sm-10">
+            <input type="email" class="form-control" id="email" value="${email}">
+        </div>
+    </div>
+    <fieldset class="row mb-3">
+        <legend class="col-form-label col-sm-2 pt-0">Género</legend>
+        <div class="col-sm-10">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="gender" id="genderMale" value="male" ${gender=='female' ? '': 'checked'}>
+                <label class="form-check-label" for="genderMale">
+                    Hombre
+                  </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="female" ${gender=='female' ? 'checked': ''}>
+                <label class="form-check-label" for="genderFemale">
+                    Mujer
+                  </label>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="row mb-3">
+        <legend class="col-form-label col-sm-2 pt-0">Estado</legend>
+        <div class="col-sm-10">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="status" id="statusActive" value="active" ${status=='inactive' ? '': 'checked'}>
+                <label class="form-check-label" for="statusActive">
+                      Activo
+                    </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="status" id="statusInactive" value="inactive" ${status=='inactive' ? 'checked': ''}>
+                <label class="form-check-label" for="statusInactive">
+                      Inactivo
+                    </label>
+            </div>
+        </div>
+    </fieldset>
+    <button type="submit" class="btn btn-primary">Añadir usuario</button>
+</form>

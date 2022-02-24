@@ -66,9 +66,60 @@
         <div class="principal" id="principal"></div>
         <div class="pie"></div>
     </div>
+    <template id="templateFormUsuario">
+        <br>
+        <form id="usuario">
+            <div class="row mb-3">
+                <label for="name" class="col-sm-2 col-form-label">Nombre</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="name" value="${name}">
+                </div>
+              </div>
+              <div class="row mb-3">
+              <label for="email" class="col-sm-2 col-form-label">Email</label>
+              <div class="col-sm-10">
+                <input type="email" class="form-control" id="email" value="${email}">
+              </div>
+            </div>
+            <fieldset class="row mb-3">
+              <legend class="col-form-label col-sm-2 pt-0">Género</legend>
+              <div class="col-sm-10">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="gender" id="genderMale" value="male" ${gendermale}>
+                  <label class="form-check-label" for="genderMale">
+                    Hombre
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="gender" id="genderFemale" value="female" ${genderfemale}>
+                  <label class="form-check-label" for="genderFemale">
+                    Mujer
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+            <fieldset class="row mb-3">
+                <legend class="col-form-label col-sm-2 pt-0">Estado</legend>
+                <div class="col-sm-10">
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="status" id="statusActive" value="active" ${statusactive}>
+                    <label class="form-check-label" for="statusActive">
+                      Activo
+                    </label>
+                  </div>
+                  <div class="form-check">
+                    <input class="form-check-input" type="radio" name="status" id="statusInactive" value="inactive" ${statusinactive}>
+                    <label class="form-check-label" for="statusInactive">
+                      Inactivo
+                    </label>
+                  </div>
+                </div>
+              </fieldset>
+            <button type="submit" class="btn btn-primary">Añadir usuario</button>
+          </form>    
+    </template>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <script src="config.js"></script>
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 
 </html>

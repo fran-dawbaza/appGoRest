@@ -1,3 +1,6 @@
+import { GOREST_API_TOKEN } from './config.js';
+import { fileToTemplateLiteral } from './lib/fileToTemplateLiteral.js';
+
 // lo usaremos para las peticiones con fetch, no olvidar modificar method y body
 
 const opcionesFetch = {
@@ -9,29 +12,8 @@ const opcionesFetch = {
     method: "GET",
 
 };
-/*
-fetch("https://gorest.co.in/public/v2/users", opcionesFetch)
-    .then(res => {
-        console.log(res);
 
-        for (var pair of res.headers.entries()) {
-            console.log(pair[0], pair[1]);
-        }
-        // iterate over all headers
-        for (let [key, value] of res.headers) {
-            console.log(`${key} = ${value}`);
-        }
-        console.log('limit: ', res.headers.get('X-Pagination-Limit'));
-        //res.headers.forEach(function(val, key) { console.log(key + ' -> ' + val); });
-        return res.json();
-    })
-    .then(users => {
-        console.log(users);
-    })
-    .catch(console.log);
 
-let res;
-*/
 const muestraUsuario = evento => {
     if (evento.target.localName == "td") { // captura de evento click en una celda-> buscamos la fila
         console.log("td padre:", evento.target.parentNode);
@@ -85,7 +67,7 @@ const muestraUsuarios = async(evento, pagina = 1) => {
 
     const respuesta = await fetch("https://gorest.co.in/public/v2/users?page=" + pagina, opcionesFetch);
     const usuarios = await respuesta.json();
-    res = respuesta;
+
     //res.headers.forEach(function(val, key) { console.log(key + ' -> ' + val); });
 
     const contenido = document.getElementById('principal');
@@ -129,14 +111,14 @@ const nuevoUsuario = evento => {
     evento.preventDefault();
     const nombre = document.getElementById('name').value;
     const email = document.getElementById('email').value;
-    const genero = document.getElementById('genderMale').checked ? 'male':'female';
-    const estado = document.getElementById('statusActive').checked ? 'male':'female';
+    const genero = document.getElementById('genderMale').checked ? 'male' : 'female';
+    const estado = document.getElementById('statusActive').checked ? 'male' : 'female';
     const formu = new FormData('usuario');
     console.log(formu);
 
 }
 
-/*document.getElementById('usuarios').addEventListener('click', muestraUsuarios);
+document.getElementById('usuarios').addEventListener('click', muestraUsuarios);
 document.getElementById('buscarPorEntrada').addEventListener('click', () => {
     const buscar = document.getElementById('buscar');
     buscar.attributes['tipobusqueda'].value = 'posts';
@@ -165,6 +147,6 @@ document.getElementById('buscarGeneral').addEventListener('click', () => {
 document.getElementById('formBuscar').addEventListener('submit', (e) => {
     e.preventDefault();
     const tipoBusqueda = document.getElementById('buscar').attributes['tipobusqueda'].value;
-});*/
+});
 
-document.getElementById('usuario').addEventListener('submit', nuevoUsuario);
+//document.getElementById('formUsuario').addEventListener('submit', nuevoUsuario);
