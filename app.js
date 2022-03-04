@@ -1,5 +1,5 @@
 import { GOREST_API_TOKEN } from './config.js';
-import { fileToTemplateLiteral } from './lib/fileToTemplateLiteral.js';
+import { html, render, renderFile } from './lib/renderFile.js';
 
 // lo usaremos para las peticiones con fetch, no olvidar modificar method y body
 
@@ -46,7 +46,7 @@ const hazPaginacion = (url, paginaActual, cabeceras) => {
         }
     }
 
-    let plantilla = `<nav aria-label="Page navigation">
+    let plantilla = () => html`<nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
       <li class="page-item ${statusAnterior}"><a class="page-link" href="#">Anterior</a></li>
       <li class="page-item ${statusPrimera}"><a class="page-link" href="#">1</a></li>
@@ -55,7 +55,7 @@ const hazPaginacion = (url, paginaActual, cabeceras) => {
       <li class="page-item ${statusSiguiente}"><a class="page-link" href="#">Siguiente</a></li>
     </ul>
   </nav>`;
-    return plantilla;
+    return plantilla();
 
 };
 
@@ -85,7 +85,7 @@ const muestraUsuarios = async(evento, pagina = 1) => {
         <td>botones</td>
     </tr>`;
     });*/
-    let filas = usuarios.map(u => `
+    /*let filas = usuarios.map(u => `
     <tr>
         <th scope="row">${u.id}</th>
         <td>${u.name}</td>
@@ -94,18 +94,13 @@ const muestraUsuarios = async(evento, pagina = 1) => {
         <td>${u.status=='active'?'activo':'inactivo'}</td>
         <td>botones</td>
     </tr>`
-    ).join('');
+    ).join('');*/
  
 
     const paginacion = hazPaginacion('https://gorest.co.in/public/v2/users?page=', pagina, respuesta.headers);
 
-    fileToTemplateLiteral('./templates/tablaUsuarios.html',
-                        {filas,paginacion},
-                        (error,resultado)=>{
-                            contenido.removeEventListener('click', muestraUsuario, false);
-                            contenido.innerHTML = resultado;
-                            contenido.addEventListener('click', muestraUsuario, false)
-                        });
+    renderFile('./templates/tablaUsuarios.html',
+                        {usuarios,paginacion},contenido);
    /* contenido.innerHTML = `<div class="table-responsive"><table id="userTable" class="table table-striped table-hover">
     <thead>
       <tr>

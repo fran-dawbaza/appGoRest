@@ -1,3 +1,5 @@
+import {html} from 'https://unpkg.com/lit-html@2.2.0';
+export const tablaUsuarios = (usuarios,paginacion) => html`
 <div class="table-responsive">
     <table id="userTable" class="table table-striped table-hover">
     <thead>
@@ -26,3 +28,4 @@
   </table>
 </div>
 ${paginacion}
+`;

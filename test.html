@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="app"></div>
+
+<script type="module">
+  import { html, render } from "https://unpkg.com/lit-html@2.2.0";
+  //import { tablaUsuarios} from "./templates/tablaUsuarios.js";
+
+  const app = document.getElementById('app');
+  
+  const usuarios = [{
+      name: 'pepe',
+      email: 'sdf@test.com',
+      gender: 'male',
+      status: 'inactive'
+  },
+  {
+      name: 'pepa',
+      email: 'sdfa@test.com',
+      gender: 'female',
+      status: 'active'
+  },
+  {
+      name: 'pepin',
+      email: 'sdsf@test.com',
+      gender: 'male',
+      status: 'active'
+  }];
+
+  async function renderFile(url,datos,destino,opciones={}) {
+    const respuesta = await fetch(url);
+    const texto = await respuesta.text();
+    const keys = Object.keys(datos);
+    keys.push('html');
+    //keys.push('texto')
+    //keys.push('render');
+    const values = Object.values(datos);
+    values.push(html);
+    //values.push(texto);
+    //values.push(render);
+    //console.log(`return html\`${texto}\`;`);
+    const plantilla = new Function(...keys, `return html\`${texto}\`;`);
+    render(plantilla(...values), destino, opciones);
+  };
+
+  //const respuesta = await fetch('./templates/tablaUsuarios.html');
+  //const texto = await respuesta.text();
+    //const keys = Object.keys(objetoDatos);
+    //keys.push('html');
+    //keys.push('texto')
+    //keys.push('render');
+    //const values = Object.values(objetoDatos);
+    //values.push(html);
+    //values.push(texto);
+    //values.push(render);
+    //console.log(`return html\`${texto}\`;`);
+  //const plantilla = new Function('usuarios','paginacion','html', `return html\`${texto}\`;`);
+  renderFile('./templates/tablaUsuarios.html',{usuarios,"paginacion":"paginacion"}, app);
+
+
+</script>
+</body>
+</html>
