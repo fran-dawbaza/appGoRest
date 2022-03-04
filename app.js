@@ -1,5 +1,5 @@
 import { GOREST_API_TOKEN } from './config.js';
-import { html, render, renderFile } from './lib/renderFile.js';
+import { html, renderFile } from './lib/renderFile.js';
 
 // lo usaremos para las peticiones con fetch, no olvidar modificar method y body
 
@@ -97,10 +97,42 @@ const muestraUsuarios = async(evento, pagina = 1) => {
     ).join('');*/
  
 
-    const paginacion = hazPaginacion('https://gorest.co.in/public/v2/users?page=', pagina, respuesta.headers);
+    //const paginacion = hazPaginacion('https://gorest.co.in/public/v2/users?page=', pagina, respuesta.headers);
+
+    const limit = respuesta.headers.get('X-Pagination-Limit') || 20; // results per page.
+    const total = respuesta.headers.get('X-Pagination-Total') || 'incontables'; // total number of results.
+    const paginas = respuesta.headers.get('X-Pagination-Pages') || '100'; //total number of pages.
+    //const pagina = respuesta.get('X-Pagination-Page') || paginaActual || 1; //current page number.
+
+    const statusAnterior = pagina == 1 ? 'disabled' : '" onclick="muestraUsuarios(null,' + (+pagina - 1) + ')';
+    const statusSiguiente = pagina == paginas ? 'disabled' : '" onclick="muestraUsuarios(null,' + (+pagina + 1) + ')';
+    const statusPrimera = pagina == 1 ? 'disabled' : '" onclick="muestraUsuarios(null,1)';
+    const statusUltima = pagina == paginas ? 'disabled' : '" onclick="muestraUsuarios(null,' + (paginas) + ')';
+
+    let paginasCercanas = '';
+
+    for (let i = +pagina - 5; i < +pagina + 5; i++) {
+        if (i > 1 && i < +paginas - 1) {
+            let disabled = (i == pagina) ? 'disabled' : '" onclick="muestraUsuarios(null,' + i + ')';
+            paginasCercanas += `<li class="page-item ${disabled}"><a class="page-link" href="#">${i}</a></li>
+            `;
+        }
+    }
+
 
     renderFile('./templates/tablaUsuarios.html',
-                        {usuarios,paginacion},contenido);
+                        {
+                            usuarios,
+                            limit,
+                            total,
+                            paginas,
+                            pagina,
+                            statusAnterior,
+                            statusSiguiente,
+                            statusPrimera,
+                            statusUltima,
+                            paginasCercanas
+                        },contenido);
    /* contenido.innerHTML = `<div class="table-responsive"><table id="userTable" class="table table-striped table-hover">
     <thead>
       <tr>
