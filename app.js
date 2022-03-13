@@ -104,6 +104,7 @@ const muestraUsuarios = async(evento, pagina = 1) => {
     const paginas = respuesta.headers.get('X-Pagination-Pages') || '100'; //total number of pages.
     //const pagina = respuesta.get('X-Pagination-Page') || paginaActual || 1; //current page number.
 
+    const arrayPaginas = [];
     const statusAnterior = pagina == 1 ? 'disabled' : '" onclick="muestraUsuarios(null,' + (+pagina - 1) + ')';
     const statusSiguiente = pagina == paginas ? 'disabled' : '" onclick="muestraUsuarios(null,' + (+pagina + 1) + ')';
     const statusPrimera = pagina == 1 ? 'disabled' : '" onclick="muestraUsuarios(null,1)';
@@ -118,7 +119,7 @@ const muestraUsuarios = async(evento, pagina = 1) => {
             `;
         }
     }
-
+    //const arrayPaginas = [2,3,4,5,6,7,8,9];
 
     renderFile('./templates/tablaUsuarios.html',
                         {
@@ -131,7 +132,8 @@ const muestraUsuarios = async(evento, pagina = 1) => {
                             statusSiguiente,
                             statusPrimera,
                             statusUltima,
-                            paginasCercanas
+                           // paginasCercanas,
+                            arrayPaginas
                         },contenido);
    /* contenido.innerHTML = `<div class="table-responsive"><table id="userTable" class="table table-striped table-hover">
     <thead>
