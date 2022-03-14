@@ -46,7 +46,7 @@ const hazPaginacion = (url, paginaActual, cabeceras) => {
         }
     }
 
-    let plantilla = () => html`<nav aria-label="Page navigation">
+    let plantilla = () => html `<nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
       <li class="page-item ${statusAnterior}"><a class="page-link" href="#">Anterior</a></li>
       <li class="page-item ${statusPrimera}"><a class="page-link" href="#">1</a></li>
@@ -71,31 +71,6 @@ const muestraUsuarios = async(evento, pagina = 1) => {
     //res.headers.forEach(function(val, key) { console.log(key + ' -> ' + val); });
 
     const contenido = document.getElementById('principal');
-    
-
-    /*let filas = '';
-    usuarios.forEach(usuario => {
-        filas += `
-    <tr>
-        <th scope="row">${usuario.id}</th>
-        <td>${usuario.name}</td>
-        <td>${usuario.email}</td>
-        <td>${usuario.gender=='male'?'hombre':'mujer'}</td>
-        <td>${usuario.status=='active'?'activo':'inactivo'}</td>
-        <td>botones</td>
-    </tr>`;
-    });*/
-    /*let filas = usuarios.map(u => `
-    <tr>
-        <th scope="row">${u.id}</th>
-        <td>${u.name}</td>
-        <td>${u.email}</td>
-        <td>${u.gender=='male'?'hombre':'mujer'}</td>
-        <td>${u.status=='active'?'activo':'inactivo'}</td>
-        <td>botones</td>
-    </tr>`
-    ).join('');*/
- 
 
     //const paginacion = hazPaginacion('https://gorest.co.in/public/v2/users?page=', pagina, respuesta.headers);
 
@@ -105,53 +80,60 @@ const muestraUsuarios = async(evento, pagina = 1) => {
     //const pagina = respuesta.get('X-Pagination-Page') || paginaActual || 1; //current page number.
 
     const arrayPaginas = [];
-    const statusAnterior = pagina == 1 ? 'disabled' : '" onclick="muestraUsuarios(null,' + (+pagina - 1) + ')';
-    const statusSiguiente = pagina == paginas ? 'disabled' : '" onclick="muestraUsuarios(null,' + (+pagina + 1) + ')';
-    const statusPrimera = pagina == 1 ? 'disabled' : '" onclick="muestraUsuarios(null,1)';
-    const statusUltima = pagina == paginas ? 'disabled' : '" onclick="muestraUsuarios(null,' + (paginas) + ')';
+    arrayPaginas.push({ // página 1
+        disabled: (pagina == 1 ? 'disabled' : ''),
+        url: '#',
+        page: 1,
+        id: 'li_pag_1'
+    });
 
-    let paginasCercanas = '';
+    let i = Math.max(2, +pagina - 3);
+    let medio1 = Math.floor(i / 2);
+    if (medio1 > 1 && medio1 < i) {
+        arrayPaginas.push({ // página intermedia 1
+            disabled: (pagina == medio1 ? 'disabled' : ''),
+            url: '#',
+            page: medio1,
+            id: `li_pag_${medio1}`
+        });
 
-    for (let i = +pagina - 5; i < +pagina + 5; i++) {
-        if (i > 1 && i < +paginas - 1) {
-            let disabled = (i == pagina) ? 'disabled' : '" onclick="muestraUsuarios(null,' + i + ')';
-            paginasCercanas += `<li class="page-item ${disabled}"><a class="page-link" href="#">${i}</a></li>
-            `;
-        }
     }
-    //const arrayPaginas = [2,3,4,5,6,7,8,9];
+    let tope = Math.min(+pagina + 4, +paginas);
+    while (i < tope) {
+        arrayPaginas.push({
+            disabled: (pagina == i ? 'disabled' : ''),
+            url: '#',
+            page: i,
+            id: `li_pag_${i}`
+        });
+        i++;
+    }
 
-    renderFile('./templates/tablaUsuarios.html',
-                        {
-                            usuarios,
-                            limit,
-                            total,
-                            paginas,
-                            pagina,
-                            statusAnterior,
-                            statusSiguiente,
-                            statusPrimera,
-                            statusUltima,
-                           // paginasCercanas,
-                            arrayPaginas
-                        },contenido);
-   /* contenido.innerHTML = `<div class="table-responsive"><table id="userTable" class="table table-striped table-hover">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Nombre</th>
-        <th scope="col">Email</th>
-        <th scope="col">Género</th>
-        <th scope="col">Estado</th>
-        <th scope="col">acciones</th>
-      </tr>
-    </thead>
-    <tbody>${filas}
-    </tbody>
-  </table>
-</div>${paginacion}`;
-    contenido.addEventListener('click', muestraUsuario, false);*/
-    //JSON.stringify(usuarios);
+    let medio2 = Math.floor((tope + +paginas) / 2);
+    if (medio2 > tope && medio2 < +paginas) {
+        arrayPaginas.push({ // página intermedia 1
+            disabled: (pagina == medio2 ? 'disabled' : ''),
+            url: '#',
+            page: medio2,
+            id: `li_pag_${medio2}`
+        });
+    }
+
+    arrayPaginas.push({
+        disabled: (pagina == paginas ? 'disabled' : ''),
+        url: '#',
+        page: paginas,
+        id: `li_pag_${paginas}`
+    });
+
+    await renderFile('./templates/tablaUsuarios.html', {
+        usuarios,
+        arrayPaginas
+    }, contenido);
+
+    arrayPaginas.forEach(p => {
+        document.getElementById(p.id).addEventListener('click', (e) => muestraUsuarios(e, p.page));
+    });
 };
 
 const nuevoUsuario = evento => {

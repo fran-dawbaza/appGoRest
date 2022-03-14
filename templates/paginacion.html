@@ -1,8 +1,7 @@
-  <nav aria-label="Page navigation">
+<nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
-      ${
-               arrayPaginas.map(p => html`<li class="page-item ${p.disabled}">
-                 <a class="page-link" href="${p.url}" onclick="${p.click}">${p.page}</a></li>`)
-      }
+        ${ arrayPaginas.map(p => html`
+        <li class="page-item ${p.disabled}">
+            <a class="page-link" href="${p.url}" onclick="${p.click}">${p.page}</a></li>`) }
     </ul>
-  </nav>
+</nav>
