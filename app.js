@@ -25,37 +25,63 @@ const muestraUsuario = evento => {
     console.log(evento)
 };
 
-const hazPaginacion = (url, paginaActual, cabeceras) => {
+const hazPaginacion = (cabeceras) => {
+
     const limit = cabeceras.get('X-Pagination-Limit') || 20; // results per page.
     const total = cabeceras.get('X-Pagination-Total') || 'incontables'; // total number of results.
     const paginas = cabeceras.get('X-Pagination-Pages') || '100'; //total number of pages.
     const pagina = cabeceras.get('X-Pagination-Page') || paginaActual || 1; //current page number.
 
-    const statusAnterior = pagina == 1 ? 'disabled' : '" onclick="muestraUsuarios(null,' + (+pagina - 1) + ')';
-    const statusSiguiente = pagina == paginas ? 'disabled' : '" onclick="muestraUsuarios(null,' + (+pagina + 1) + ')';
-    const statusPrimera = pagina == 1 ? 'disabled' : '" onclick="muestraUsuarios(null,1)';
-    const statusUltima = pagina == paginas ? 'disabled' : '" onclick="muestraUsuarios(null,' + (paginas) + ')';
+    // Array de objetos que se usa para generar el paginador
+    // cada elemento de este array se mostrará en el paginador
+    const arrayPaginas = [];
+    arrayPaginas.push({ // para la página 1 del paginador
+        disabled: (pagina == 1 ? 'disabled' : ''),
+        url: '#',
+        page: 1,
+        id: 'li_pag_1'
+    });
 
-    let paginasCercanas = '';
+    let i = Math.max(2, +pagina - 3);
+    let medio1 = Math.floor(i / 2);
+    if (medio1 > 1 && medio1 < i) {
+        arrayPaginas.push({ // página intermedia 1 del paginador
+            disabled: (pagina == medio1 ? 'disabled' : ''),
+            url: '#',
+            page: medio1,
+            id: `li_pag_${medio1}`
+        });
 
-    for (let i = +pagina - 5; i < +pagina + 5; i++) {
-        if (i > 1 && i < +paginas - 1) {
-            let disabled = (i == pagina) ? 'disabled' : '" onclick="muestraUsuarios(null,' + i + ')';
-            paginasCercanas += `<li class="page-item ${disabled}"><a class="page-link" href="#">${i}</a></li>
-            `;
-        }
+    }
+    let tope = Math.min(+pagina + 4, +paginas);
+    while (i < tope) { // páginas alrededor de la página actual
+        arrayPaginas.push({
+            disabled: (pagina == i ? 'disabled' : ''),
+            url: '#',
+            page: i,
+            id: `li_pag_${i}`
+        });
+        i++;
     }
 
-    let plantilla = () => html `<nav aria-label="Page navigation">
-    <ul class="pagination justify-content-center">
-      <li class="page-item ${statusAnterior}"><a class="page-link" href="#">Anterior</a></li>
-      <li class="page-item ${statusPrimera}"><a class="page-link" href="#">1</a></li>
-      ${paginasCercanas}
-      <li class="page-item ${statusUltima}"><a class="page-link" href="#">${paginas}</a></li>
-      <li class="page-item ${statusSiguiente}"><a class="page-link" href="#">Siguiente</a></li>
-    </ul>
-  </nav>`;
-    return plantilla();
+    let medio2 = Math.floor((tope + +paginas) / 2);
+    if (medio2 > tope && medio2 < +paginas) {
+        arrayPaginas.push({ // página intermedia 2
+            disabled: (pagina == medio2 ? 'disabled' : ''),
+            url: '#',
+            page: medio2,
+            id: `li_pag_${medio2}`
+        });
+    }
+
+    arrayPaginas.push({ // para la última página del paginador
+        disabled: (pagina == paginas ? 'disabled' : ''),
+        url: '#',
+        page: paginas,
+        id: `li_pag_${paginas}`
+    });
+
+    return arrayPaginas;
 
 };
 
@@ -68,69 +94,16 @@ const muestraUsuarios = async(evento, pagina = 1) => {
     const respuesta = await fetch("https://gorest.co.in/public/v2/users?page=" + pagina, opcionesFetch);
     const usuarios = await respuesta.json();
 
-    //res.headers.forEach(function(val, key) { console.log(key + ' -> ' + val); });
-
     const contenido = document.getElementById('principal');
 
-    //const paginacion = hazPaginacion('https://gorest.co.in/public/v2/users?page=', pagina, respuesta.headers);
-
-    const limit = respuesta.headers.get('X-Pagination-Limit') || 20; // results per page.
-    const total = respuesta.headers.get('X-Pagination-Total') || 'incontables'; // total number of results.
-    const paginas = respuesta.headers.get('X-Pagination-Pages') || '100'; //total number of pages.
-    //const pagina = respuesta.get('X-Pagination-Page') || paginaActual || 1; //current page number.
-
-    const arrayPaginas = [];
-    arrayPaginas.push({ // página 1
-        disabled: (pagina == 1 ? 'disabled' : ''),
-        url: '#',
-        page: 1,
-        id: 'li_pag_1'
-    });
-
-    let i = Math.max(2, +pagina - 3);
-    let medio1 = Math.floor(i / 2);
-    if (medio1 > 1 && medio1 < i) {
-        arrayPaginas.push({ // página intermedia 1
-            disabled: (pagina == medio1 ? 'disabled' : ''),
-            url: '#',
-            page: medio1,
-            id: `li_pag_${medio1}`
-        });
-
-    }
-    let tope = Math.min(+pagina + 4, +paginas);
-    while (i < tope) {
-        arrayPaginas.push({
-            disabled: (pagina == i ? 'disabled' : ''),
-            url: '#',
-            page: i,
-            id: `li_pag_${i}`
-        });
-        i++;
-    }
-
-    let medio2 = Math.floor((tope + +paginas) / 2);
-    if (medio2 > tope && medio2 < +paginas) {
-        arrayPaginas.push({ // página intermedia 1
-            disabled: (pagina == medio2 ? 'disabled' : ''),
-            url: '#',
-            page: medio2,
-            id: `li_pag_${medio2}`
-        });
-    }
-
-    arrayPaginas.push({
-        disabled: (pagina == paginas ? 'disabled' : ''),
-        url: '#',
-        page: paginas,
-        id: `li_pag_${paginas}`
-    });
+    const arrayPaginas = hazPaginacion(respuesta.headers);
 
     await renderFile('./templates/tablaUsuarios.html', {
         usuarios,
         arrayPaginas
     }, contenido);
 
+    // para cada elemento del paginador añadimos un evento click para mostrar la página correspondiente
     arrayPaginas.forEach(p => {
         document.getElementById(p.id).addEventListener('click', (e) => muestraUsuarios(e, p.page));
     });
