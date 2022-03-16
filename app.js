@@ -21,8 +21,27 @@ const muestraUsuario = evento => {
         console.log("id usuario:", evento.target.parentNode.children[0].textContent);
         console.log("nombre:", evento.target.parentNode.children[1].textContent);
         console.log("email:", evento.target.parentNode.children[2].textContent);
+    } else if (evento.target.localName == "i") { // captura de evento click para el icono de edición o borrad
+        console.log(evento.target);
+        const edit_user = evento.target.getAttribute('edit_user');
+        const delete_user = evento.target.getAttribute('delete_user');
+        if (edit_user && edit_user != '') {
+            const user = {
+                id: edit_user,
+                name: evento.target.parentNode.parentNode.children[1].textContent,
+                email: evento.target.parentNode.parentNode.children[2].textContent,
+                gender: (evento.target.parentNode.parentNode.children[3].children[0].getAttribute('title') == 'hombre' ? 'male' : 'female'),
+                status: (evento.target.parentNode.parentNode.children[4].children[0].getAttribute('title') == 'activo' ? 'active' : 'inactive')
+            };
+            console.log("Editando el usuario ", user);
+            //muestraFormularioUsuario(user);
+        }
+        if (delete_user && delete_user != '') {
+            console.log("Borrando el usuario " + delete_user);
+            //confirmaBorradoUsuario(delete_user)
+        }
     }
-    console.log(evento.currentTarget.localName);
+
     console.log(evento)
 };
 
