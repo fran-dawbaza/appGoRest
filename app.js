@@ -1,5 +1,6 @@
 import { GOREST_API_TOKEN } from './config.js';
-import { html, renderFile } from './lib/renderFile.js';
+//import { html, renderFile } from './lib/renderFile.js';
+import { renderFile } from './lib/renderFile.js';
 
 // lo usaremos para las peticiones con fetch, no olvidar modificar method y body
 
@@ -27,36 +28,36 @@ const muestraUsuario = evento => {
 
 const hazPaginacion = (cabeceras) => {
 
-    const limit = cabeceras.get('X-Pagination-Limit') || 20; // results per page.
-    const total = cabeceras.get('X-Pagination-Total') || 'incontables'; // total number of results.
-    const paginas = cabeceras.get('X-Pagination-Pages') || '100'; //total number of pages.
-    const pagina = cabeceras.get('X-Pagination-Page') || paginaActual || 1; //current page number.
+    //const limit = cabeceras.get('X-Pagination-Limit') || 20; // results per page.
+    //const total = cabeceras.get('X-Pagination-Total') || 'incontables'; // total number of results.
+    const paginas = +cabeceras.get('X-Pagination-Pages') || 100; //total number of pages.
+    const pagina = +cabeceras.get('X-Pagination-Page') || 1; //current page number.
 
     // Array de objetos que se usa para generar el paginador
     // cada elemento de este array se mostrará en el paginador
     const arrayPaginas = [];
     arrayPaginas.push({ // para la página 1 del paginador
-        disabled: (pagina == 1 ? 'disabled' : ''),
+        active: (pagina == 1 ? 'active' : ''),
         url: '#',
         page: 1,
         id: 'li_pag_1'
     });
 
-    let i = Math.max(2, +pagina - 3);
+    let i = Math.max(2, pagina - 3);
     let medio1 = Math.floor(i / 2);
     if (medio1 > 1 && medio1 < i) {
         arrayPaginas.push({ // página intermedia 1 del paginador
-            disabled: (pagina == medio1 ? 'disabled' : ''),
+            active: (pagina == medio1 ? 'active' : ''),
             url: '#',
             page: medio1,
             id: `li_pag_${medio1}`
         });
 
     }
-    let tope = Math.min(+pagina + 4, +paginas);
+    let tope = Math.min(pagina + 4, paginas);
     while (i < tope) { // páginas alrededor de la página actual
         arrayPaginas.push({
-            disabled: (pagina == i ? 'disabled' : ''),
+            active: (pagina == i ? 'active' : ''),
             url: '#',
             page: i,
             id: `li_pag_${i}`
@@ -64,10 +65,10 @@ const hazPaginacion = (cabeceras) => {
         i++;
     }
 
-    let medio2 = Math.floor((tope + +paginas) / 2);
-    if (medio2 > tope && medio2 < +paginas) {
+    let medio2 = Math.floor((tope + paginas) / 2);
+    if (medio2 > tope && medio2 < paginas) {
         arrayPaginas.push({ // página intermedia 2
-            disabled: (pagina == medio2 ? 'disabled' : ''),
+            active: (pagina == medio2 ? 'active' : ''),
             url: '#',
             page: medio2,
             id: `li_pag_${medio2}`
@@ -75,7 +76,7 @@ const hazPaginacion = (cabeceras) => {
     }
 
     arrayPaginas.push({ // para la última página del paginador
-        disabled: (pagina == paginas ? 'disabled' : ''),
+        active: (pagina == paginas ? 'active' : ''),
         url: '#',
         page: paginas,
         id: `li_pag_${paginas}`
@@ -85,7 +86,7 @@ const hazPaginacion = (cabeceras) => {
 
 };
 
-const muestraUsuarios = async(evento, pagina = 1) => {
+const muestraUsuarios = async(pagina = 1) => {
     // Obtenemos el array de usuarios y mostramos tabla
 
     opcionesFetch.method = 'GET';
@@ -100,15 +101,15 @@ const muestraUsuarios = async(evento, pagina = 1) => {
     const paginador = hazPaginacion(respuesta.headers);
 
     //leemos el archivo de plantilla y rellenamos con los arrays usuarios y paginador
-    await renderFile('./templates/tablaUsuarios.html', {
-        usuarios,
-        paginador
-    }, contenido);
+    contenido.innerHTML = await renderFile('./templates/tablaUsuarios.html', { usuarios, paginador });
 
     // para cada elemento del paginador añadimos un evento click para mostrar la página correspondiente
-    arrayPaginas.forEach(p => {
-        document.getElementById(p.id).addEventListener('click', (e) => muestraUsuarios(e, p.page));
+    paginador.forEach(p => {
+        document.getElementById(p.id).addEventListener('click', () => muestraUsuarios(p.page));
     });
+
+    // para la tabla, añado evento click. muestraUsuario localiza el id de usuario
+    document.getElementById('userTable').addEventListener('click', muestraUsuario);
 };
 
 const nuevoUsuario = evento => {
@@ -122,7 +123,7 @@ const nuevoUsuario = evento => {
 
 }
 
-document.getElementById('usuarios').addEventListener('click', muestraUsuarios);
+document.getElementById('usuarios').addEventListener('click', () => muestraUsuarios());
 document.getElementById('buscarPorEntrada').addEventListener('click', () => {
     const buscar = document.getElementById('buscar');
     buscar.attributes['tipobusqueda'].value = 'posts';
