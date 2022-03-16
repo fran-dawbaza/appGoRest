@@ -96,11 +96,13 @@ const muestraUsuarios = async(evento, pagina = 1) => {
 
     const contenido = document.getElementById('principal');
 
-    const arrayPaginas = hazPaginacion(respuesta.headers);
+    //obtenemos un array de objetos para el paginador
+    const paginador = hazPaginacion(respuesta.headers);
 
+    //leemos el archivo de plantilla y rellenamos con los arrays usuarios y paginador
     await renderFile('./templates/tablaUsuarios.html', {
         usuarios,
-        arrayPaginas
+        paginador
     }, contenido);
 
     // para cada elemento del paginador añadimos un evento click para mostrar la página correspondiente
