@@ -17,10 +17,10 @@
                 <td>${u.name}</td>
                 <td>${u.email}</td>
                 <td>${u.gender=='male' ? '<i title="hombre" class="bi bi-gender-male"></i>':'<i title="mujer" class="bi bi-gender-female"></i>'}</td>
-                <td>${u.status=='active' ? '<i title="activo" class="bi bi-unlock-fill"></i>':'<i title="inactivo" class="bi bi-lock-fill"></i>'}</td>
-                <td>
-                    <i edit_user="${u.id}" title="Editar" class="bi bi-pencil-square" style="font-size: 1.4rem;"></i> &nbsp;
-                    <i delete_user="${u.id}" title="Eliminar" class="bi bi-trash3" style="font-size: 1.4rem;"></i>
+                <td>${u.status=='active' ? '<i title="activo" class="bi bi-person-check"></i>':'<i title="inactivo" class="bi bi-person-x"></i>'}</td>
+                <td><a href="#">
+                    <i edit_user="${u.id}" title="Editar" class="bi bi-pencil-square" style="font-size: 1.4rem;"></i></a> &nbsp;
+                    <a href="#"><i delete_user="${u.id}" title="Eliminar" class="bi bi-trash3" style="font-size: 1.4rem;"></i></a>
                 </td>
             </tr>` ).join('') }
         </tbody>

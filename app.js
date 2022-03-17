@@ -14,8 +14,44 @@ const opcionesFetch = {
 
 };
 
+const actualizaUsuario = async (idForm,pagina) =>{
+    const formu = document.getElementById(idForm);
+    const id = formu.id.value;
+    const user = {
+        name: formu.name.value,
+        email: formu.email.value,
+        gender: formu.gender.value,
+        status: formu.status.value
+    };
+    opcionesFetch.method = 'PUT';
+    opcionesFetch.body = JSON.stringify(user);
 
-const muestraUsuario = evento => {
+    const respuesta = await fetch("https://gorest.co.in/public/v2/users/" + id, opcionesFetch);
+    if (!respuesta.ok) {
+        console.log(respuesta);
+        alert('Error durante la actualización')
+    }
+    muestraUsuarios(pagina)
+};
+
+const muestraFormularioUsuario = async (usuario,pagina=1) => {
+    const contenido = document.getElementById('principal');
+
+
+    //leemos el archivo de plantilla y rellenamos con los arrays usuarios y paginador
+    usuario.textoBoton='Actualizar usuario';
+    usuario.idBoton='botonActualiza'+usuario.id;
+    usuario.idFormulario='formularioActualiza'+usuario.id;
+    contenido.innerHTML = await renderFile('./templates/formUsuario.html', usuario);
+    document.getElementById(usuario.idBoton)
+        .addEventListener('click',()=>actualizaUsuario(usuario.idFormulario,pagina));
+    document.getElementById('cancelar')
+        .addEventListener('click',()=>muestraUsuarios(pagina));
+
+};
+
+
+const manejadorTablaUsuarios = (evento,pagina) => {
     if (evento.target.localName == "td") { // captura de evento click en una celda-> buscamos la fila
         console.log("td padre:", evento.target.parentNode);
         console.log("id usuario:", evento.target.parentNode.children[0].textContent);
@@ -28,21 +64,19 @@ const muestraUsuario = evento => {
         if (edit_user && edit_user != '') {
             const user = {
                 id: edit_user,
-                name: evento.target.parentNode.parentNode.children[1].textContent,
-                email: evento.target.parentNode.parentNode.children[2].textContent,
-                gender: (evento.target.parentNode.parentNode.children[3].children[0].getAttribute('title') == 'hombre' ? 'male' : 'female'),
-                status: (evento.target.parentNode.parentNode.children[4].children[0].getAttribute('title') == 'activo' ? 'active' : 'inactive')
+                name: evento.target.parentNode.parentNode.parentNode.children[1].textContent,
+                email: evento.target.parentNode.parentNode.parentNode.children[2].textContent,
+                gender: (evento.target.parentNode.parentNode.parentNode.children[3].children[0].getAttribute('title') == 'hombre' ? 'male' : 'female'),
+                status: (evento.target.parentNode.parentNode.parentNode.children[4].children[0].getAttribute('title') == 'activo' ? 'active' : 'inactive')
             };
             console.log("Editando el usuario ", user);
-            //muestraFormularioUsuario(user);
+            muestraFormularioUsuario(user,pagina);
         }
         if (delete_user && delete_user != '') {
             console.log("Borrando el usuario " + delete_user);
             //confirmaBorradoUsuario(delete_user)
         }
     }
-
-    console.log(evento)
 };
 
 const hazPaginacion = (cabeceras) => {
@@ -127,8 +161,8 @@ const muestraUsuarios = async(pagina = 1) => {
         document.getElementById(p.id).addEventListener('click', () => muestraUsuarios(p.page));
     });
 
-    // para la tabla, añado evento click. muestraUsuario localiza el id de usuario
-    document.getElementById('userTable').addEventListener('click', muestraUsuario);
+    // para la tabla, añado evento click. 
+    document.getElementById('userTable').addEventListener('click', e=>manejadorTablaUsuarios(e,pagina));
 };
 
 const nuevoUsuario = evento => {

@@ -1,5 +1,5 @@
 <br>
-<form id="formUsuario">
+<form id="${idFormulario}">
     <div class="row mb-3">
         <label for="name" class="col-sm-2 col-form-label">Nombre</label>
         <div class="col-sm-10">
@@ -47,5 +47,6 @@
             </div>
         </div>
     </fieldset>
-    <button type="submit" class="btn btn-primary">Añadir usuario</button>
+    <button id="${idBoton}" type="button" class="btn btn-primary">${textoBoton}</button>
+    <button id="cancelar" type="button" class="btn btn-secondary">Cancelar</button>
 </form>
