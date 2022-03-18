@@ -14,6 +14,18 @@ const opcionesFetch = {
 
 };
 
+const eliminaUsuario = async (idUsuario,pagina) =>{
+    opcionesFetch.method = 'DELETE';
+    delete opcionesFetch.body;
+
+    const respuesta = await fetch("https://gorest.co.in/public/v2/users/" + idUsuario, opcionesFetch);
+    if (!respuesta.ok) {
+        console.log(respuesta);
+        alert('Error durante la actualización')
+    }
+    muestraUsuarios(pagina)
+};
+
 const actualizaUsuario = async (idForm,pagina) =>{
     const formu = document.getElementById(idForm);
     const id = formu.id.value;
@@ -74,6 +86,9 @@ const manejadorTablaUsuarios = (evento,pagina) => {
         }
         if (delete_user && delete_user != '') {
             console.log("Borrando el usuario " + delete_user);
+            if (confirm(`¿Estás seguro de borrar el usuario ${delete_user}?, el borrado no se puede deshacer.`)) {
+                eliminaUsuario(delete_user,pagina);
+            }
             //confirmaBorradoUsuario(delete_user)
         }
     }
