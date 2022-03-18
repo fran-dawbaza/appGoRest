@@ -14,7 +14,7 @@ const opcionesFetch = {
 
 };
 
-const eliminaUsuario = async (idUsuario,pagina) =>{
+const eliminaUsuario = async(idUsuario, pagina) => {
     opcionesFetch.method = 'DELETE';
     delete opcionesFetch.body;
 
@@ -23,10 +23,29 @@ const eliminaUsuario = async (idUsuario,pagina) =>{
         console.log(respuesta);
         alert('Error durante la actualización')
     }
-    muestraUsuarios(pagina)
+    muestraUsuarios(pagina);
 };
 
-const actualizaUsuario = async (idForm,pagina) =>{
+const nuevoUsuario = async(idForm, pagina) => {
+    const formu = document.getElementById(idForm);
+    const user = {
+        name: formu.name.value,
+        email: formu.email.value,
+        gender: formu.gender.value,
+        status: formu.status.value
+    };
+    opcionesFetch.method = 'POST';
+    opcionesFetch.body = JSON.stringify(user);
+
+    const respuesta = await fetch("https://gorest.co.in/public/v2/users/", opcionesFetch);
+    if (!respuesta.ok) {
+        console.log(respuesta);
+        alert('Error durante la actualización')
+    }
+    muestraUsuarios(pagina);
+};
+
+const actualizaUsuario = async(idForm, pagina) => {
     const formu = document.getElementById(idForm);
     const id = formu.id.value;
     const user = {
@@ -43,33 +62,43 @@ const actualizaUsuario = async (idForm,pagina) =>{
         console.log(respuesta);
         alert('Error durante la actualización')
     }
-    muestraUsuarios(pagina)
+    muestraUsuarios(pagina);
 };
 
-const muestraFormularioUsuario = async (usuario,pagina=1) => {
+const muestraFormularioUsuario = async(usuario, pagina = 1) => {
     const contenido = document.getElementById('principal');
 
+    usuario.idBoton = 'botonUsuario';
+    usuario.idFormulario = 'formularioUsuario';
 
-    //leemos el archivo de plantilla y rellenamos con los arrays usuarios y paginador
-    usuario.textoBoton='Actualizar usuario';
-    usuario.idBoton='botonActualiza'+usuario.id;
-    usuario.idFormulario='formularioActualiza'+usuario.id;
-    contenido.innerHTML = await renderFile('./templates/formUsuario.html', usuario);
-    document.getElementById(usuario.idBoton)
-        .addEventListener('click',()=>actualizaUsuario(usuario.idFormulario,pagina));
-    document.getElementById('cancelar')
-        .addEventListener('click',()=>muestraUsuarios(pagina));
+    //
+    if (usuario.id) {
+        usuario.textoBoton = 'Actualizar usuario';
+        contenido.innerHTML = await renderFile('./templates/formUsuario.html', usuario);
+        document.getElementById(usuario.idBoton)
+            .addEventListener('click', () => actualizaUsuario(usuario.idFormulario, pagina));
+        document.getElementById('cancelar')
+            .addEventListener('click', () => muestraUsuarios(pagina));
+    } else {
+        usuario.textoBoton = 'Generar nuevo usuario';
+        contenido.innerHTML = await renderFile('./templates/formUsuario.html', usuario);
+        document.getElementById(usuario.idBoton)
+            .addEventListener('click', () => nuevoUsuario(usuario.idFormulario, pagina));
+        document.getElementById('cancelar')
+            .addEventListener('click', () => muestraUsuarios(pagina));
+    }
 
 };
 
 
-const manejadorTablaUsuarios = (evento,pagina) => {
-    if (evento.target.localName == "td") { // captura de evento click en una celda-> buscamos la fila
+const manejadorTablaUsuarios = (evento, pagina) => {
+    /*if (evento.target.localName == "td") { // captura de evento click en una celda-> buscamos la fila
         console.log("td padre:", evento.target.parentNode);
         console.log("id usuario:", evento.target.parentNode.children[0].textContent);
         console.log("nombre:", evento.target.parentNode.children[1].textContent);
         console.log("email:", evento.target.parentNode.children[2].textContent);
-    } else if (evento.target.localName == "i") { // captura de evento click para el icono de edición o borrad
+    } else */
+    if (evento.target.localName == "i") { // captura de evento click para el icono de edición o borrad
         console.log(evento.target);
         const edit_user = evento.target.getAttribute('edit_user');
         const delete_user = evento.target.getAttribute('delete_user');
@@ -82,12 +111,12 @@ const manejadorTablaUsuarios = (evento,pagina) => {
                 status: (evento.target.parentNode.parentNode.parentNode.children[4].children[0].getAttribute('title') == 'activo' ? 'active' : 'inactive')
             };
             console.log("Editando el usuario ", user);
-            muestraFormularioUsuario(user,pagina);
+            muestraFormularioUsuario(user, pagina);
         }
         if (delete_user && delete_user != '') {
             console.log("Borrando el usuario " + delete_user);
             if (confirm(`¿Estás seguro de borrar el usuario ${delete_user}?, el borrado no se puede deshacer.`)) {
-                eliminaUsuario(delete_user,pagina);
+                eliminaUsuario(delete_user, pagina);
             }
             //confirmaBorradoUsuario(delete_user)
         }
@@ -177,19 +206,20 @@ const muestraUsuarios = async(pagina = 1) => {
     });
 
     // para la tabla, añado evento click. 
-    document.getElementById('userTable').addEventListener('click', e=>manejadorTablaUsuarios(e,pagina));
+    document.getElementById('userTable').addEventListener('click', e => manejadorTablaUsuarios(e, pagina));
+
+    // para el botón de nuevo usuario, añado evento click. 
+    const usuario = {
+        id: '',
+        name: '',
+        email: '',
+        gender: 'male',
+        status: 'active'
+    };
+    document.getElementById('new_user').addEventListener('click', e => muestraFormularioUsuario(usuario, pagina));
+
 };
 
-const nuevoUsuario = evento => {
-    evento.preventDefault();
-    const nombre = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const genero = document.getElementById('genderMale').checked ? 'male' : 'female';
-    const estado = document.getElementById('statusActive').checked ? 'male' : 'female';
-    const formu = new FormData('usuario');
-    console.log(formu);
-
-}
 
 document.getElementById('usuarios').addEventListener('click', () => muestraUsuarios());
 document.getElementById('buscarPorEntrada').addEventListener('click', () => {
@@ -221,5 +251,3 @@ document.getElementById('formBuscar').addEventListener('submit', (e) => {
     e.preventDefault();
     const tipoBusqueda = document.getElementById('buscar').attributes['tipobusqueda'].value;
 });
-
-//document.getElementById('formUsuario').addEventListener('submit', nuevoUsuario);
